@@ -1,6 +1,10 @@
 import React from 'react'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 
+type callback = {
+  (matches: boolean): React.ReactNode
+}
+
 type MediaQueryProps = {
   minWidth?: number
   maxWidth?: number
@@ -9,10 +13,10 @@ type MediaQueryProps = {
   minResolution?: string
   maxResolution?: string
   orientation?: string
-  children: React.ReactNode
+  children: React.ReactNode | callback
 }
 
-export function MediaQuery({
+export default function MediaQuery({
   minWidth, 
   maxWidth, 
   minHeigth, 
@@ -49,9 +53,7 @@ export function MediaQuery({
     return query!
   }
 
-  return (
-    <>
-      {mql && children}
-    </>
-  )
+  if(typeof children === 'function') return <>{children(mql)}</>
+  else if(mql) return  <>{children}</>
+  else return null
 }
