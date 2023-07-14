@@ -1,7 +1,7 @@
 import React from 'react'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 
-type callback = {
+type renderProp = {
   (matches: boolean): React.ReactNode
 }
 
@@ -10,13 +10,13 @@ type MediaQueryProps = {
   maxWidth?: number
   minHeigth?: number
   maxHeigth?: number
-  minResolution?: string
-  maxResolution?: string
-  orientation?: string
-  children: React.ReactNode | callback
+  minResolution?: number | `${number}dppx`
+  maxResolution?: number | `${number}dppx`
+  orientation?: "portrait" | "landscape"
+  children: React.ReactNode | renderProp
 }
 
-export default function MediaQuery({
+export function MediaQuery({
   minWidth, 
   maxWidth, 
   minHeigth, 
@@ -25,35 +25,37 @@ export default function MediaQuery({
   maxResolution, 
   orientation, 
   children}: MediaQueryProps) {
-  const mql = useMediaQuery({ query: returnQuery() })
-
   function returnQuery() {
-    let query: string
+    let query: string[] = []
     if(minWidth) {
-      query = `(min-width: ${minWidth}px)`
+      query.push(`(min-width: ${minWidth}px)`) 
     }
     if(maxWidth) {
-      query = `(max-width: ${maxWidth}px)`
+      query.push(`(max-width: ${maxWidth}px)`)
     }
     if(minHeigth) {
-      query = `(min-heigth: ${minHeigth}px)`
+      query.push(`(min-heigth: ${minHeigth}px)`)
     }
     if(maxHeigth) {
-      query = `(min-heigth: ${minHeigth}px)`
+      query.push(`(min-heigth: ${minHeigth}px)`)
     }
     if(minResolution) {
-      query = `(min-resolution: ${minResolution})`
+      if(typeof minResolution === 'number') query.push(`(min-resolution: ${minResolution}dppx)`) 
+      else query.push(`(min-resolution: ${minResolution})`)
     }
     if(maxResolution) {
-      query = `(max-resolution: ${maxResolution})`
+      if(typeof maxResolution === 'number') query.push(`(min-resolution: ${maxResolution}dppx)`) 
+      else query.push(`(min-resolution: ${maxResolution})`)
     }
     if(orientation) {
-      query = `(orientation: ${orientation})`
+      query.push(`(orientation: ${orientation})`)
     }
-    return query!
+    return query.join(' and ')
   }
 
-  if(typeof children === 'function') return <>{children(mql)}</>
-  else if(mql) return  <>{children}</>
-  else return null
+  const mediaQueryList = useMediaQuery({ query: returnQuery() })
+
+  if(typeof children === 'function') return <>{children(mediaQueryList)}</>
+  if(mediaQueryList) return <>{children}</>
+  return null
 }

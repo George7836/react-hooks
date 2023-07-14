@@ -4,20 +4,28 @@ type useMediaQueryProps = {
   query: string
 }
 
-export function useMediaQuery({query}: useMediaQueryProps) {
-  const mql = window.matchMedia(query)
-  const [check, setCheck] = useState<boolean>(mql.matches)
+function getMatches(query: string) {
+  if (typeof window !== 'undefined') {
+    return window.matchMedia(query).matches
+  }
+  return false
+}
 
-  function checkChanges(e: MediaQueryListEvent) {
-    setCheck((check) => e.matches)
+export function useMediaQuery({query}: useMediaQueryProps) {
+  const [check, setCheck] = useState(getMatches(query))
+
+  function handleChange() {
+    setCheck(getMatches(query))
   }
 
   useEffect(() => {
-    mql.addEventListener('change', checkChanges)
+    const mediaQueryList = window.matchMedia(query)
+    handleChange()
+    mediaQueryList.addEventListener('change', handleChange)
     return () => {
-      mql.removeEventListener('change', checkChanges)
+      mediaQueryList.removeEventListener('change', handleChange)
     }
-  }, [])
+  }, [query])
 
   return check
 }

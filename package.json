@@ -2,8 +2,11 @@
   "name": "react-hooks",
   "version": "1.0.0",
   "description": "",
+  "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
+  "unpkg": "dist/index.umd.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "start": "rollup -c -w"
@@ -22,8 +25,6 @@
   "devDependencies": {
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
-    "babel-core": "^6.26.3",
-    "babel-runtime": "^6.26.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rollup": "^3.26.2",
@@ -34,7 +35,6 @@
     "dist"
   ],
   "peerDependencies": {
-    "react": "^16.13.0||^17||^18",
-    "react-dom": "^16.13.0 || ^17||^18"
+    "react": ">=16.8.0"
   }
 }

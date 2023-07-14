@@ -1,51 +1,45 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
-type Callback = {
-  id?: number
-  (isVisible: boolean): void
+type Callback = (isVisible: boolean) => void
+type DeleteEventListener = () => void
+
+function getDocumentVisivility() {
+  if (typeof document === "undefined") return true
+  return !document.hidden
 }
 
 export function useDocumentVisibility() {
-  const [visible, setVisible] = useState<boolean>(
-    typeof document !== 'undefined'
-      ? document.visibilityState === 'visible'
-      : true
-  )
+  const [visible, setVisible] = useState<boolean>(getDocumentVisivility())
   const [count, setCount] = useState(0)
   const eventListeners = useRef<Callback[]>([])
 
-  function handlerEvent() {
-    setVisible(document.visibilityState === 'visible')
-
-    if(document.hidden) {
-      setCount((count) => count + 1)
-    }
-
-    eventListeners.current.forEach((callback) => {
-      callback(document.visibilityState === 'visible')
-    })
-  }
-
-  const onVisibilityChange = (callback: Callback) => {
-    callback.id = createId()
-    eventListeners.current.push(callback)
-    const boundedHandler = handlerEvent.bind(null)
-    document.addEventListener('visibilitychange', boundedHandler)
-
+  const onVisibilityChange = useCallback(
+    (callback: Callback): DeleteEventListener => {
+    eventListeners.current.push(callback)    
     return () => {
-      document.removeEventListener('visibilitychange', boundedHandler)
-      eventListeners.current = eventListeners.current.filter((el) => el.id !== callback.id)
+      const index = eventListeners.current.indexOf(callback)
+      if(index > -1) eventListeners.current.splice(index, 1) 
     }
-  }
+  }, [])
 
-  function createId() {
-    let id = Math.random()
-    const check = eventListeners.current.find((el) => el.id === id)
-    if(check) {
-      createId()
+  useEffect(() => {
+    function handleEvent() {
+      setVisible(getDocumentVisivility())
+  
+      if(document.hidden) {
+        setCount((count) => count + 1)
+      }
+  
+      eventListeners.current.forEach((callback) => {
+        callback(getDocumentVisivility())
+      })
     }
-    return id
-  }
+
+    document.addEventListener('visibilitychange', handleEvent)
+    return () => {
+      document.removeEventListener('visibilitychange', handleEvent)
+    }
+  }, [])
 
   return {
     onVisibilityChange, 

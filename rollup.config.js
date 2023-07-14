@@ -24,5 +24,5 @@ export default {
       clean: true,
      }),
   ],
-  external: ["react", "react-dom"],
+  external: ["react"],
 }
