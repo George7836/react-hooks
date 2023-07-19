@@ -6,10 +6,10 @@ type renderProp = {
 }
 
 type MediaQueryProps = {
-  minWidth?: number
-  maxWidth?: number
-  minHeigth?: number
-  maxHeigth?: number
+  minWidth?: number | `${number}px`
+  maxWidth?: number | `${number}px`
+  minHeigth?: number | `${number}px`
+  maxHeigth?: number | `${number}px`
   minResolution?: number | `${number}dppx`
   maxResolution?: number | `${number}dppx`
   orientation?: "portrait" | "landscape"
