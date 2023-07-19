@@ -24,14 +24,14 @@ export function useDocumentVisibility() {
 
   useEffect(() => {
     function handleEvent() {
-      setVisible(getDocumentVisivility())
+      setVisible(!document.hidden)
   
       if(document.hidden) {
         setCount((count) => count + 1)
       }
   
       eventListeners.current.forEach((callback) => {
-        callback(getDocumentVisivility())
+        callback(!document.hidden)
       })
     }
 

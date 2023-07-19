@@ -26,18 +26,22 @@ export function MediaQuery({
   orientation, 
   children}: MediaQueryProps) {
   function returnQuery() {
-    let query: string[] = []
+    const query: string[] = []
     if(minWidth) {
-      query.push(`(min-width: ${minWidth}px)`) 
+      if(typeof minWidth === 'number') query.push(`(min-width: ${minWidth}px)`) 
+      else query.push(`(min-width: ${minWidth})`)
     }
     if(maxWidth) {
-      query.push(`(max-width: ${maxWidth}px)`)
+      if(typeof maxWidth === 'number') query.push(`(max-width: ${maxWidth}px)`)
+      else query.push(`(max-width: ${maxWidth})`)
     }
     if(minHeigth) {
-      query.push(`(min-heigth: ${minHeigth}px)`)
+      if(typeof minHeigth === 'number') query.push(`(min-heigth: ${minHeigth}px)`)
+      else query.push(`(min-heigth: ${minHeigth})`)
     }
     if(maxHeigth) {
-      query.push(`(min-heigth: ${minHeigth}px)`)
+      if(typeof maxHeigth === 'number') query.push(`(max-heigth: ${maxHeigth}px)`)
+      else query.push(`(max-heigth: ${maxHeigth})`)
     }
     if(minResolution) {
       if(typeof minResolution === 'number') query.push(`(min-resolution: ${minResolution}dppx)`) 
