@@ -3,13 +3,13 @@ import { useState, useRef, useCallback, useEffect } from "react";
 type Callback = (isVisible: boolean) => void
 type DeleteEventListener = () => void
 
-function getDocumentVisivility() {
-  if (typeof document === "undefined") return true
+function getDocumentVisivility(defaultValue: boolean) {
+  if (typeof document === "undefined" || defaultValue === false) return true
   return !document.hidden
 }
 
-export function useDocumentVisibility() {
-  const [visible, setVisible] = useState<boolean>(getDocumentVisivility())
+export function useDocumentVisibility(defaultValue: boolean = false) {
+  const [visible, setVisible] = useState<boolean>(getDocumentVisivility(defaultValue))
   const [count, setCount] = useState(0)
   const eventListeners = useRef<Callback[]>([])
 
