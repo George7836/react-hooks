@@ -2,20 +2,21 @@ import { useEffect, useState } from "react"
 
 type useMediaQueryProps = {
   query: string
+  defaultValue?: boolean
 }
 
-function getMatches(query: string) {
+function getMatches(query: string, defaultValue: boolean) {
   if (typeof window !== 'undefined') {
     return window.matchMedia(query).matches
   }
-  return false
+  return defaultValue
 }
 
-export function useMediaQuery({query}: useMediaQueryProps) {
-  const [check, setCheck] = useState(getMatches(query))
+export function useMediaQuery({query, defaultValue = false}: useMediaQueryProps) {
+  const [check, setCheck] = useState(getMatches(query, defaultValue))
 
   function handleChange() {
-    setCheck(getMatches(query))
+    setCheck(getMatches(query, defaultValue))
   }
 
   useEffect(() => {

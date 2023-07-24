@@ -14,50 +14,30 @@ type MediaQueryProps = {
   maxResolution?: number | `${number}dppx`
   orientation?: "portrait" | "landscape"
   children: React.ReactNode | renderProp
+  defaultValue?: boolean
 }
 
-export function MediaQuery({
-  minWidth, 
-  maxWidth, 
-  minHeigth, 
-  maxHeigth, 
-  minResolution, 
-  maxResolution, 
-  orientation, 
-  children}: MediaQueryProps) {
+export function MediaQuery({children, defaultValue = false, ...props}: MediaQueryProps) {
   function returnQuery() {
-    const query: string[] = []
-    if(minWidth) {
-      if(typeof minWidth === 'number') query.push(`(min-width: ${minWidth}px)`) 
-      else query.push(`(min-width: ${minWidth})`)
-    }
-    if(maxWidth) {
-      if(typeof maxWidth === 'number') query.push(`(max-width: ${maxWidth}px)`)
-      else query.push(`(max-width: ${maxWidth})`)
-    }
-    if(minHeigth) {
-      if(typeof minHeigth === 'number') query.push(`(min-heigth: ${minHeigth}px)`)
-      else query.push(`(min-heigth: ${minHeigth})`)
-    }
-    if(maxHeigth) {
-      if(typeof maxHeigth === 'number') query.push(`(max-heigth: ${maxHeigth}px)`)
-      else query.push(`(max-heigth: ${maxHeigth})`)
-    }
-    if(minResolution) {
-      if(typeof minResolution === 'number') query.push(`(min-resolution: ${minResolution}dppx)`) 
-      else query.push(`(min-resolution: ${minResolution})`)
-    }
-    if(maxResolution) {
-      if(typeof maxResolution === 'number') query.push(`(min-resolution: ${maxResolution}dppx)`) 
-      else query.push(`(min-resolution: ${maxResolution})`)
-    }
-    if(orientation) {
-      query.push(`(orientation: ${orientation})`)
-    }
-    return query.join(' and ')
+    const queries:string[] = []
+    Object.entries(props).forEach(([key, value]) => {
+      const property: string = key.replace(/([A-Z])/g, '-$&').toLowerCase()
+      switch(property) {
+        case 'orientation':
+          queries.push(`(orientation: ${value})`)
+          break;
+        case 'min-resolution':
+        case 'max-resolution':
+          queries.push(`(${property}: ${typeof value === 'number' ? value + 'dppx' : value})`)
+          break;
+        default:
+          queries.push(`(${property}: ${typeof value === 'number' ? value + 'px' : value})`)
+      }
+    })
+    return queries.join(' and ')
   }
 
-  const mediaQueryList = useMediaQuery({ query: returnQuery() })
+  const mediaQueryList = useMediaQuery({ query: returnQuery(), defaultValue: defaultValue })
 
   if(typeof children === 'function') return <>{children(mediaQueryList)}</>
   if(mediaQueryList) return <>{children}</>
