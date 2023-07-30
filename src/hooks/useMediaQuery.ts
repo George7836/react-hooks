@@ -21,7 +21,7 @@ export function useMediaQuery({query, defaultValue = false}: useMediaQueryProps)
 
   useEffect(() => {
     const mediaQueryList = window.matchMedia(query)
-    handleChange()
+    setCheck(mediaQueryList.matches)
     mediaQueryList.addEventListener('change', handleChange)
     return () => {
       mediaQueryList.removeEventListener('change', handleChange)
